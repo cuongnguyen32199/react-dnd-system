@@ -1,0 +1,8 @@
+.idea
+.vscode
+
+dist
+build
+node_modules
+
+reportWebVitals.ts
