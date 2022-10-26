@@ -35,11 +35,13 @@ interface CardPropTypes {
 }
 
 function Card({ id, name, image, index }: CardPropTypes): React.ReactElement {
+  const imageSrc = `${process.env.PUBLIC_URL}/${image}`.replace(/\/\//g, '/');
+
   return (
     <Draggable draggableId={String(id)} index={index}>
       {(provided) => (
         <Container ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-          <Image src={window.location.href + image} alt="" />
+          <Image src={imageSrc} alt="" />
           <Title>{name}</Title>
         </Container>
       )}

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
+import STATE from 'scripts/state.json';
 import Column from 'components/Column';
-import { STATE } from 'utils';
 
 const Container = styled.div`
   display: flex;

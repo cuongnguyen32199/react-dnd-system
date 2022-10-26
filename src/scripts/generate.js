@@ -9,19 +9,15 @@ const COLUMNS = {
   4: { id: 4, name: 'Microsoft', ticketIDs: [] },
 };
 
-const ticketPath = path.join(__dirname, 'tickets.json');
-const columnPath = path.join(__dirname, 'columns.json');
-
 const IMAGE_PREFIX = 'assets/images';
 const IMAGES = [1, 2, 3, 4, 5, 6, 7, 8];
 
 (async () => {
-  // process.exit();
   const data = fs.readFileSync(path.join(__dirname, 'raw.json'), 'utf8');
 
   console.log('Generating JSON');
   const items = JSON.parse(data);
-  const filters = items.splice(0, 10);
+  const filters = items.splice(0, 20);
 
   const tickets = {};
   for (const ticket of filters) {
@@ -33,8 +29,9 @@ const IMAGES = [1, 2, 3, 4, 5, 6, 7, 8];
     tickets[id] = { ...ticket, image: `${IMAGE_PREFIX}/${randomImage}.jpeg` };
   }
 
+  const state = { columnsOrder: COLUMNS_ID, tickets, columns: COLUMNS };
+
   console.log('Writing JSON files');
-  fs.writeFileSync(ticketPath, JSON.stringify(tickets, null, 2));
-  fs.writeFileSync(columnPath, JSON.stringify(COLUMNS, null, 2));
+  fs.writeFileSync(path.join(__dirname, 'state.json'), JSON.stringify(state, null, 2));
   console.info('Finish! Exiting...');
 })();
