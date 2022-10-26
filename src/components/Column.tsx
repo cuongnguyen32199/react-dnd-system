@@ -27,12 +27,7 @@ const Title = styled.div`
 const ContainerBody = styled.div<ContainerBodyPropTypes>`
   display: flex;
   flex-direction: column;
-  background-color: ${(props) =>
-    props?.isDraggingOver === true
-      ? 'rgb(255, 235, 230)'
-      : props?.isDraggingFromThis === true
-      ? 'rgb(230, 252, 250)'
-      : 'rgb(235, 236, 240)'};
+  background-color: ${(props) => props?.isDraggingOver === true ? 'rgb(255, 235, 230)' : props?.isDraggingFromThis === true ? 'rgb(230, 252, 250)' : 'rgb(235, 236, 240)'};
 `;
 
 interface ColumnPropTypes {
