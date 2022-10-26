@@ -8,30 +8,33 @@ const COLUMNS = {
   3: { id: 3, name: 'Panasonic', ticketIDs: [] },
   4: { id: 4, name: 'Microsoft', ticketIDs: [] },
 };
-const TICKETS = fs.readFileSync(path.join(__dirname, 'raw.json'), 'utf8');
 
-const tickets = path.join(__dirname, 'tickets.json');
-const columns = path.join(__dirname, 'columns.json');
+const ticketPath = path.join(__dirname, 'tickets.json');
+const columnPath = path.join(__dirname, 'columns.json');
 
 const IMAGE_PREFIX = '/assets/images';
 const IMAGES = [1, 2, 3, 4, 5, 6, 7, 8];
 
 (async () => {
-  process.exit();
+  // process.exit();
+  const data = fs.readFileSync(path.join(__dirname, 'raw.json'), 'utf8');
+
   console.log('Generating JSON');
-  const items = JSON.parse(TICKETS);
-  const normalize = {};
-  for (const ticket of items) {
+  const items = JSON.parse(data);
+  const filters = items.splice(0, 10);
+
+  const tickets = {};
+  for (const ticket of filters) {
     const { id } = ticket;
-    const random = IMAGES[Math.floor(Math.random() * IMAGES.length)];
+    const randomImage = IMAGES[Math.floor(Math.random() * IMAGES.length)];
     const columnID = COLUMNS_ID[Math.floor(Math.random() * COLUMNS_ID.length)];
 
     COLUMNS[columnID].ticketIDs.push(id);
-    normalize[id] = { ...ticket, image: `${IMAGE_PREFIX}/${random}.jpeg` };
+    tickets[id] = { ...ticket, image: `${IMAGE_PREFIX}/${randomImage}.jpeg` };
   }
 
-  console.log('Writing JSON into files');
-  fs.writeFileSync(tickets, JSON.stringify(normalize, null, 2));
-  fs.writeFileSync(columns, JSON.stringify(COLUMNS, null, 2));
+  console.log('Writing JSON files');
+  fs.writeFileSync(ticketPath, JSON.stringify(tickets, null, 2));
+  fs.writeFileSync(columnPath, JSON.stringify(COLUMNS, null, 2));
   console.info('Finish! Exiting...');
 })();
