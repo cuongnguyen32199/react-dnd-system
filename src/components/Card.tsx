@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   display: flex;
@@ -9,6 +10,7 @@ const Container = styled.div`
   font-weight: 500;
   align-items: flex-start;
   gap: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 const Image = styled.img`
@@ -26,16 +28,22 @@ const Title = styled.p`
 `;
 
 interface CardPropTypes {
+  id: number;
   name: string;
   image: string;
+  index: number;
 }
 
-function Card({ name, image }: CardPropTypes): React.ReactElement {
+function Card({ id, name, image, index }: CardPropTypes): React.ReactElement {
   return (
-    <Container>
-      <Image src={image} alt="" />
-      <Title>{name}</Title>
-    </Container>
+    <Draggable draggableId={String(id)} index={index}>
+      {(provided) => (
+        <Container ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+          <Image src={image} alt="" />
+          <Title>{name}</Title>
+        </Container>
+      )}
+    </Draggable>
   );
 }
 

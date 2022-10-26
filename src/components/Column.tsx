@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Droppable } from 'react-beautiful-dnd';
 
-import { IColumn } from 'types';
+import { IColumn, ITicket } from 'types';
 import Card from 'components/Card';
-import tickets from 'scripts/tickets.json';
+
+interface ContainerBodyPropTypes {
+  isDraggingOver?: boolean;
+  isDraggingFromThis?: boolean;
+}
 
 const Container = styled.div`
   width: 300px;
@@ -15,29 +20,45 @@ const Container = styled.div`
 const Title = styled.div`
   font-size: 1rem;
   font-weight: 700;
-  color: #172B4D;
+  color: #172b4d;
   padding: 1rem 0;
 `;
 
-const ContainerBody = styled.div`
+const ContainerBody = styled.div<ContainerBodyPropTypes>`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  background-color: ${(props) =>
+    props?.isDraggingOver === true
+      ? 'rgb(255, 235, 230)'
+      : props?.isDraggingFromThis === true
+      ? 'rgb(230, 252, 250)'
+      : 'rgb(235, 236, 240)'};
 `;
 
 interface ColumnPropTypes {
   column: IColumn;
+  tickets: ITicket[];
 }
 
-function Column({ column }: ColumnPropTypes): React.ReactElement {
-  const { ticketIDs } = column;
-  const items = ticketIDs.map((id) => tickets[String(id) as keyof typeof tickets]);
+function Column({ column, tickets }: ColumnPropTypes): React.ReactElement {
   return (
     <Container>
       <Title>{column.name}</Title>
-      <ContainerBody>
-        {items.map((item) => <Card key={item.id} name={item.name} image={item.image} />)}
-      </ContainerBody>
+      <Droppable droppableId={String(column.id)}>
+        {(provided, snapshot) => (
+          <ContainerBody
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            isDraggingOver={snapshot.isDraggingOver}
+            isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+          >
+            {tickets.map((ticket, index) => (
+              <Card key={ticket.id} id={ticket.id} name={ticket.name} image={ticket.image} index={index} />
+            ))}
+            {provided.placeholder}
+          </ContainerBody>
+        )}
+      </Droppable>
     </Container>
   );
 }

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 import Column from 'components/Column';
-import columns from 'scripts/columns.json';
+import { STATE } from 'utils';
 
 const Container = styled.div`
   display: flex;
@@ -17,18 +17,51 @@ const Container = styled.div`
 `;
 
 function Board(): React.ReactElement {
-  const handleDragEnd = (): void => {
-    console.log('Handle drag end');
+  const [state, setState] = useState(STATE);
+
+  const { columnsOrder, columns, tickets } = state;
+
+  const handleDragEnd = (data: DropResult): void => {
+    const { source, destination, draggableId } = data;
+
+    if (destination === null) return;
+    if (source.droppableId === destination?.droppableId && source.index === destination?.index) return;
+
+    const start = columns[source.droppableId as keyof typeof columns];
+    const end = columns[destination?.droppableId as keyof typeof columns];
+
+    if (source.droppableId === destination?.droppableId) {
+      const ticketIDs = Array.from(start.ticketIDs);
+      ticketIDs.splice(source.index, 1);
+      ticketIDs.splice(destination.index, 0, Number(draggableId));
+
+      setState({ ...state, columns: { ...columns, [start.id]: { ...start, ticketIDs } } });
+      return;
+    }
+
+    const ticketIDs = Array.from(start.ticketIDs);
+    ticketIDs.splice(source.index, 1);
+
+    const targetIDs = Array.from(end.ticketIDs);
+    if (typeof destination?.index === 'number') targetIDs.splice(destination?.index, 0, Number(draggableId));
+
+    setState({
+      ...state,
+      columns: { ...columns, [start.id]: { ...start, ticketIDs }, [end.id]: { ...end, ticketIDs: targetIDs } },
+    });
   };
 
-  const columnIds: string[] = Object.keys(columns);
-
   return (
-    <Container>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        {columnIds.map((id) => (<Column key={id} column={columns[id as keyof typeof columns]} />))}
-      </DragDropContext>
-    </Container>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Container>
+        {columnsOrder.map((id) => {
+          const column = columns[String(id) as keyof typeof columns];
+          const items = column.ticketIDs.map((ticketID) => tickets[String(ticketID) as keyof typeof tickets]);
+
+          return <Column key={id} column={column} tickets={items} />;
+        })}
+      </Container>
+    </DragDropContext>
   );
 }
 
