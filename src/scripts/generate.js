@@ -12,7 +12,7 @@ const COLUMNS = {
 const ticketPath = path.join(__dirname, 'tickets.json');
 const columnPath = path.join(__dirname, 'columns.json');
 
-const IMAGE_PREFIX = '/assets/images';
+const IMAGE_PREFIX = 'assets/images';
 const IMAGES = [1, 2, 3, 4, 5, 6, 7, 8];
 
 (async () => {

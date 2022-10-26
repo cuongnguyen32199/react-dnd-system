@@ -39,7 +39,7 @@ function Card({ id, name, image, index }: CardPropTypes): React.ReactElement {
     <Draggable draggableId={String(id)} index={index}>
       {(provided) => (
         <Container ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-          <Image src={image} alt="" />
+          <Image src={window.location.href + image} alt="" />
           <Title>{name}</Title>
         </Container>
       )}
